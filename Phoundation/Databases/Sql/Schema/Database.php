@@ -325,4 +325,34 @@ class Database extends SchemaAbstract implements DatabaseInterface
                                         ':column' => $column,
         ]);
     }
+
+
+    /**
+     * Returns the size in bytes for this table
+     *
+     * @return int
+     */
+    public function getSize(): int
+    {
+        return sql()->getInteger('SELECT `data_length` + `index_length` AS `size_bytes` 
+                                  FROM   `information_schema`.`tables` 
+                                  WHERE  `table_schema` = :database', [
+                                      ':database' => $this->getName()
+        ]);
+    }
+
+
+    /**
+     * Returns the amount of rows in this table
+     *
+     * @return int
+     */
+    public function getCount(): int
+    {
+        return sql()->getInteger('SELECT SUM(`table_rows`) 
+                                  FROM   `information_schema`.`tables`
+                                  WHERE  `table_schema` = :database', [
+                                      ':database' => $this->getName()
+        ]);
+    }
 }

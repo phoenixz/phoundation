@@ -37,4 +37,19 @@ interface SchemaAbstractInterface
      * @return void
      */
     public function reload(): void;
+
+    /**
+     * Returns the size in bytes for this table
+     *
+     * @return int
+     */
+    public function getSize(): int;
+
+
+    /**
+     * Returns the amount of rows in this table
+     *
+     * @return int
+     */
+    public function getCount(): int;
 }

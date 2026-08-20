@@ -104,4 +104,31 @@ abstract class SchemaAbstract implements SchemaAbstractInterface
     {
         $this->load();
     }
+
+
+    /**
+     * Returns the parent for this Schema object
+     *
+     * @return SchemaAbstractInterface|SchemaInterface
+     */
+    public function getParentObject(): SchemaAbstractInterface|SchemaInterface
+    {
+        return $this->_parent;
+    }
+
+
+    /**
+     * Returns the size in bytes for this table
+     *
+     * @return int
+     */
+    abstract public function getSize(): int;
+
+
+    /**
+     * Returns the amount of rows in this table
+     *
+     * @return int
+     */
+    abstract public function getCount(): int;
 }

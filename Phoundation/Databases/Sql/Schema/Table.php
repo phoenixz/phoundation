@@ -19,6 +19,7 @@ namespace Phoundation\Databases\Sql\Schema;
 use Phoundation\Core\Log\Log;
 use Phoundation\Data\Interfaces\IteratorInterface;
 use Phoundation\Data\Iterator;
+use Phoundation\Databases\Sql\Exception\SqlException;
 use Phoundation\Databases\Sql\Interfaces\SqlInterface;
 use Phoundation\Databases\Sql\Schema\Interfaces\SchemaAbstractInterface;
 use Phoundation\Databases\Sql\Schema\Interfaces\SchemaInterface;
@@ -110,6 +111,65 @@ class Table extends SchemaAbstract implements TableInterface
     public function getAlterObject(): TableAlterInterface
     {
         return new TableAlter($this->name, $this->getSqlObject(), $this);
+    }
+
+
+    /**
+     * Returns the parent for this Table object
+     *
+     * @return SchemaAbstractInterface|SchemaInterface
+     */
+    public function getParentObject(): SchemaAbstractInterface|SchemaInterface
+    {
+        $return = parent::getParentObject();
+
+        if ($return->getName() !== $this->getSqlObject()->getDatabase()) {
+            throw new SqlException(ts('Cannot return Table parent Database object, as the database for the parent ":parent" does not match the database for the Sql object ":sql"', [
+                ':sql'    => $this->getSqlObject()->getDatabase(),
+                ':parent' => $this->getParentObject()->getName()
+            ]));
+        }
+
+        return $return;
+    }
+
+
+    /**
+     * Returns the database to which this table belongs
+     *
+     * @return string
+     */
+    public function getDatabase(): string
+    {
+        return $this->getParentObject()->getName();
+    }
+
+
+    /**
+     * Returns the size in bytes for this table
+     *
+     * @return int
+     */
+    public function getSize(): int
+    {
+        return sql()->getInteger('SELECT `data_length` + `index_length` AS `size_bytes` 
+                                  FROM   `information_schema`.`tables` 
+                                  WHERE  `table_schema` = :database 
+                                  AND    `table_name`   = :table', [
+                                      ':database' => $this->getDatabase(),
+                                      ':table'    => $this->getName()
+        ]);
+    }
+
+
+    /**
+     * Returns the amount of rows in this table
+     *
+     * @return int
+     */
+    public function getCount(): int
+    {
+        return sql()->getInteger('SELECT COUNT(*) FROM `' . $this->getDatabase() . '`.`' . $this->getName() . '`');
     }
 
 
