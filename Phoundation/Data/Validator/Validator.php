@@ -2067,7 +2067,7 @@ throw new ObsoleteException();
      */
     public function single(): static
     {
-        $this->process_values = [null => &$this->selected_value];
+        $this->process_values = [&$this->selected_value];
 
         return $this;
     }
@@ -6849,13 +6849,13 @@ throw new ObsoleteException();
         }
 
         // Select the field.
-        $this->test_count         = 0;
-        $this->content_test_count = 0;
-        $this->selected_field     = $field;
-        $this->selected_fields[]  = $field;
-        $this->selected_value     = &$this->source[$field];
-        $this->process_values     = [null => &$this->selected_value];
-        $this->selected_optional  = null;
+        $this->test_count         =  0;
+        $this->content_test_count =  0;
+        $this->selected_field     =  $field;
+        $this->selected_fields[]  =  $field;
+        $this->selected_value     =  &$this->source[$field];
+        $this->process_values     = [&$this->selected_value];
+        $this->selected_optional  =  null;
 
         return $this;
     }

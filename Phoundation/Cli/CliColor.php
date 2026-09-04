@@ -100,22 +100,28 @@ class CliColor
 
         $return = '';
 
-        // Validate the specified foreground and background colors
-        if (!array_key_exists($foreground_color, static::$available_foreground_colors)) {
-            throw new CliColorException(tr('The specified foreground color ":color" does not exist', [
-                ':color' => $foreground_color,
-            ]));
+        if ($foreground_color) {
+            // Validate the specified foreground and background colors
+            if (!array_key_exists($foreground_color, static::$available_foreground_colors)) {
+                throw new CliColorException(tr('The specified foreground color ":color" does not exist', [
+                    ':color' => $foreground_color,
+                ]));
+            }
+
+            // Apply color
+            $return .= "\033[" . static::$available_foreground_colors[$foreground_color] . "m";
         }
 
-        if (!array_key_exists($background_color, static::$available_background_colors)) {
-            throw new CliColorException(tr('The specified background color ":color" does not exist', [
-                ':color' => $background_color,
-            ]));
-        }
+        if ($background_color) {
+            if (!array_key_exists($background_color, static::$available_background_colors)) {
+                throw new CliColorException(tr('The specified background color ":color" does not exist', [
+                    ':color' => $background_color,
+                ]));
+            }
 
-        // Apply colors
-        $return .= "\033[" . static::$available_foreground_colors[$foreground_color] . "m";
-        $return .= "\033[" . static::$available_background_colors[$background_color] . "m";
+            // Apply color
+            $return .= "\033[" . static::$available_background_colors[$background_color] . "m";
+        }
 
         // Add the specified string that should be colored and the coloring reset tag
         $return .= $source;

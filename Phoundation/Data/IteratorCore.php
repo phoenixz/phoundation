@@ -40,6 +40,7 @@ use Phoundation\Data\Exception\IteratorDataTypeNotAcceptedException;
 use Phoundation\Data\Exception\IteratorException;
 use Phoundation\Data\Exception\IteratorKeyExistsException;
 use Phoundation\Data\Exception\IteratorKeyNotExistsException;
+use Phoundation\Data\Exception\IteratorNullKeyException;
 use Phoundation\Data\Exception\IteratorValidatorFailedException;
 use Phoundation\Data\Interfaces\ArraySourceInterface;
 use Phoundation\Data\Interfaces\IteratorInterface;
@@ -423,6 +424,7 @@ class IteratorCore extends IteratorBase implements IteratorInterface
         // Skip NULL values?
         if ($value === null) {
             if ($skip_null_values) {
+                // TODO Check why $this->source[$key] would be unset if the $value is NULL. IF there was a value, it should just remain, no?
                 unset($this->source[$key]);
                 return $this;
             }
@@ -470,6 +472,7 @@ class IteratorCore extends IteratorBase implements IteratorInterface
         // Skip NULL values?
         if ($value === null) {
             if ($skip_null_values) {
+                // TODO Check why $this->source[$key] would be unset if the $value is NULL. IF there was a value, it should just remain, no?
                 unset($this->source[$key]);
                 return $this;
             }
@@ -514,6 +517,7 @@ class IteratorCore extends IteratorBase implements IteratorInterface
         // Skip NULL values?
         if ($value === null) {
             if ($skip_null_values) {
+                // TODO Check why $this->source[$key] would be unset if the $value is NULL. IF there was a value, it should just remain, no?
                 unset($this->source[$key]);
                 return $this;
             }
@@ -521,9 +525,16 @@ class IteratorCore extends IteratorBase implements IteratorInterface
 
         $value = $this->checkDataTypeAndContent($value, $key);
 
+        if ($before === null) {
+            throw new IteratorNullKeyException(tr('Cannot prepend key ":key" to Iterator class ":class" object because no "before" key was specified', [
+                ':key'   => $key,
+                ':class' => static::class,
+            ]));
+        }
+
         // Ensure the before key exists
         if (!array_key_exists($before, $this->source)) {
-            throw new IteratorKeyNotExistsException(tr('Cannot add key ":key" to Iterator class ":class" object before key ":before" because the before key ":before" does not exist', [
+            throw new IteratorKeyNotExistsException(tr('Cannot prepend key ":key" to Iterator class ":class" object before key ":before" because the before key ":before" does not exist', [
                 ':key'    => $key,
                 ':before' => $before,
                 ':class'  => static::class,
@@ -532,7 +543,7 @@ class IteratorCore extends IteratorBase implements IteratorInterface
 
         // NULL keys will be added as numerical "next" entries
         if (array_key_exists($key, $this->source) and ($exception ?? $this->exception_on_get)) {
-            throw new IteratorKeyExistsException(tr('Cannot add key ":key" to Iterator class ":class" object before key ":before" because the key ":key" already exists', [
+            throw new IteratorKeyExistsException(tr('Cannot prepend key ":key" to Iterator class ":class" object before key ":before" because the key ":key" already exists', [
                 ':key'    => $key,
                 ':before' => $before,
                 ':class'  => static::class,
@@ -562,6 +573,7 @@ class IteratorCore extends IteratorBase implements IteratorInterface
         // Skip NULL values?
         if ($value === null) {
             if ($skip_null_values) {
+                // TODO Check why $this->source[$key] would be unset if the $value is NULL. IF there was a value, it should just remain, no?
                 unset($this->source[$key]);
                 return $this;
             }
@@ -569,9 +581,16 @@ class IteratorCore extends IteratorBase implements IteratorInterface
 
         $value = $this->checkDataTypeAndContent($value, $key);
 
+        if ($after === null) {
+            throw new IteratorNullKeyException(tr('Cannot append key ":key" to Iterator class ":class" object because no "after" key was specified', [
+                ':key'   => $key,
+                ':class' => static::class,
+            ]));
+        }
+
         // Ensure the after key exists
         if (!array_key_exists($after, $this->source)) {
-            throw new IteratorKeyNotExistsException(tr('Cannot add key ":key" to Iterator class ":class" object after key ":after" because the after key ":after" does not exist', [
+            throw new IteratorKeyNotExistsException(tr('Cannot append key ":key" to Iterator class ":class" object after key ":after" because the after key ":after" does not exist', [
                 ':key'   => $key,
                 ':after' => $after,
                 ':class' => static::class,
@@ -580,7 +599,7 @@ class IteratorCore extends IteratorBase implements IteratorInterface
 
         // NULL keys will be added as numerical "next" entries
         if (array_key_exists($key, $this->source) and ($exception ?? $this->exception_on_get)) {
-            throw new IteratorKeyExistsException(tr('Cannot add key ":key" to Iterator class ":class" object after key ":after" because the key ":key" already exists', [
+            throw new IteratorKeyExistsException(tr('Cannot append key ":key" to Iterator class ":class" object after key ":after" because the key ":key" already exists', [
                 ':key'   => $key,
                 ':after' => $after,
                 ':class' => static::class,
@@ -612,6 +631,7 @@ class IteratorCore extends IteratorBase implements IteratorInterface
         // Skip NULL values?
         if ($value === null) {
             if ($skip_null_values) {
+                // TODO Check why $this->source[$key] would be unset if the $value is NULL. IF there was a value, it should just remain, no?
                 unset($this->source[$key]);
                 return $this;
             }
@@ -619,11 +639,18 @@ class IteratorCore extends IteratorBase implements IteratorInterface
 
         $value = $this->checkDataTypeAndContent($value, $key);
 
+        if ($before === null) {
+            throw new IteratorNullKeyException(tr('Cannot prepend value ":value" to Iterator class ":class" object because no "before" value was specified', [
+                ':value' => $value,
+                ':class' => static::class,
+            ]));
+        }
+
         // Ensure the before key exists
         $before_key = array_search($before, $this->source, $strict);
 
         if ($before_key === false) {
-            throw new IteratorKeyNotExistsException(tr('Cannot add key ":key" to Iterator class ":class" object before value ":before" because the before value ":before" does not exist', [
+            throw new IteratorKeyNotExistsException(tr('Cannot prepend key ":key" to Iterator class ":class" object before value ":before" because the before value ":before" does not exist', [
                 ':key'    => $key,
                 ':before' => $before,
                 ':class'  => static::class,
@@ -632,7 +659,7 @@ class IteratorCore extends IteratorBase implements IteratorInterface
 
         // NULL keys will be added as numerical "next" entries
         if (array_key_exists($key, $this->source) and ($exception ?? $this->exception_on_get)) {
-            throw new IteratorKeyExistsException(tr('Cannot add key ":key" to Iterator class ":class" object before key ":before" because the key ":key" already exists', [
+            throw new IteratorKeyExistsException(tr('Cannot prepend key ":key" to Iterator class ":class" object before key ":before" because the key ":key" already exists', [
                 ':key'    => $key,
                 ':before' => $before,
                 ':class'  => static::class,
@@ -656,7 +683,6 @@ class IteratorCore extends IteratorBase implements IteratorInterface
      *                                                                   match a loose comparison (==)
      * @param bool                             $skip_null_values [true]  If true, will skipp adding the value if it is NULL
      * @param bool                             $exception        [true]  If true, will throw an exception if the DataEntry object already exists in this list
-     * @param bool                             $auto_save        [true]  If true, will ensure the DataEntry object $value is saved before adding it to the list
      *
      * @return static
      */
@@ -665,12 +691,20 @@ class IteratorCore extends IteratorBase implements IteratorInterface
         // Skip NULL values?
         if ($value === null) {
             if ($skip_null_values) {
+                // TODO Check why $this->source[$key] would be unset if the $value is NULL. IF there was a value, it should just remain, no?
                 unset($this->source[$key]);
                 return $this;
             }
         }
 
         $value = $this->checkDataTypeAndContent($value, $key);
+
+        if ($after === null) {
+            throw new IteratorNullKeyException(tr('Cannot prepend value ":value" to Iterator class ":class" object because no "after" value was specified', [
+                ':value' => $value,
+                ':class' => static::class,
+            ]));
+        }
 
         // Ensure the after value exists
         $after_key = array_search($after, $this->source, $strict);

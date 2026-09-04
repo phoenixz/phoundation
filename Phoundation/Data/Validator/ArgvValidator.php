@@ -503,11 +503,11 @@ class ArgvValidator extends Validator implements ArgvValidatorInterface
         $this->source[$clean_field] = $value;
 
         // Select the field.
-        $this->selected_field    =  $clean_field;
-        $this->selected_fields[] =  $clean_field;
-        $this->selected_value    = &$this->source[$clean_field];
-        $this->process_values    = [null => &$this->selected_value];
-        $this->selected_optional =  null;
+        $this->selected_field    =   $clean_field;
+        $this->selected_fields[] =   $clean_field;
+        $this->selected_value    =  &$this->source[$clean_field];
+        $this->process_values    = [&$this->selected_value];
+        $this->selected_optional =   null;
 
         return $this;
     }
@@ -573,10 +573,10 @@ class ArgvValidator extends Validator implements ArgvValidatorInterface
         }
 
         // Select the field.
-        $this->selected_field    = $clean_field;
-        $this->selected_fields[] = $clean_field;
-        $this->selected_value    = &$this->source[$clean_field];
-        $this->process_values    = [null => &$this->selected_value];
+        $this->selected_field    =  $clean_field;
+        $this->selected_fields[] =  $clean_field;
+        $this->selected_value    =  &$this->source[$clean_field];
+        $this->process_values    = [&$this->selected_value];
         $this->selected_optional = null;
 
         return $this;

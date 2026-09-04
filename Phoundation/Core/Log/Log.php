@@ -1581,7 +1581,7 @@ class Log implements LogInterface
 
         try {
             if (!static::$failed) {
-                $message = $threshold . ' ' . getmypid() . ' ' . Core::getGlobalId() . '/' . Core::getLocalId() . ' Failed to log message to internal log files because "' . $e->getMessage() . '"';
+                $message = $threshold . ' ' . getmypid() . ' ' . Core::getGlobalId() . '/' . Core::getLocalId() . ' Failed to log message to internal log files because "' . $e->getMessage() . '" in "' . $e->getFile() . '@' . $e->getLine() . '"';
                 static::toAlternateLog($message);
             }
 
